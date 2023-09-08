@@ -66,7 +66,6 @@ const ContactForm = () => {
           label="Multiline"
           multiline
           rows={4}
-          defaultValue="Default Value"
         />
       </div>
       <div className="mb-3 pt-0">

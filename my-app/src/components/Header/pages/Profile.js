@@ -32,7 +32,7 @@ function Profile() {
   };
 
   const getAllPosts = () => {
-    const url = '/server_posts';
+    const url = '/Posts/';
     axios
       .get(url, {withCredentials: true})
       .then((res) => {

@@ -17,12 +17,12 @@ function Post() {
   const [inputComment, setInputComment] = useState('');
 
   useEffect(() => {
-    const url = `/server_post?id=${id}`;
+    const url = `/post/${id}`;
     axios
-      .get(url, { withCredentials: true })
+      .get(url, { withCredentials: true },{headers: {'Access-Control-Allow-Origin': '*'}})
       .then((res) => {
         console.log("Received specific post:", res.data);
-        setPost(res.data.post); 
+        setPost(res.data.post);
         setComments(res.data.comments);
         setSignedIn(res.data.checkLogged)
       })
@@ -32,15 +32,14 @@ function Post() {
   }, [id]);
 
   const handleInputChange = (event) => {
-    setInputComment(event.target.value);
+      setInputComment(event.target.value);
   };
 
   const handleAddComment = () => {
-    const url = `/server_comments`;
+    const url = `/add_comment`;
     const data = {
       post_id: id,
-      body: inputComment,
-      comment_date: moment().format()
+      comment: inputComment,
     };
     axios
       .post(url, data, { withCredentials: true })
@@ -58,16 +57,16 @@ function Post() {
       });
   };
 
-
+  const backgroundImageUrl = post ? post.image : 'https://images.unsplash.com/photo-1432821596592-e2c18b78144f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80';
   if (!post) {
     return <div>Loading...</div>;
   }
   return (
     <div className="post">
-      {post && post.image && (
+      {post && (
         <Box
           sx={{
-            backgroundImage: `url(${post.image? post.image:'https://images.unsplash.com/photo-1432821596592-e2c18b78144f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80'})`,
+            backgroundImage: `url(${backgroundImageUrl})`,
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
             height: '300px',
@@ -82,8 +81,8 @@ function Post() {
 
       <p className="post-content">{post.body}</p>
       <p></p>
-      <p>Posted {post.created_at}</p>
-      <AlignCommentsList comments={comments} setComments={setComments} handleAddComment={handleAddComment}/>
+      <p>Posted {post.published}</p>
+      <AlignCommentsList postId={id} comments={comments} setComments={setComments} handleAddComment={handleAddComment}/>
       <div>
         {isSignedIn ? 
         <div> 
@@ -93,6 +92,7 @@ function Post() {
             multiline
             rows={4}
             defaultValue=""
+            inputProps={{ maxLength: 50 }}
             sx={{width:'360px'}}
             value={inputComment} onChange={handleInputChange}
           />

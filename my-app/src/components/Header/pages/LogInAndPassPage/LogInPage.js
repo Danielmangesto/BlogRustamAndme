@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PasswordInput from './PasswordInput';
-import { ChakraProvider, Stack, Center, Box } from "@chakra-ui/react";
+import { ChakraProvider, Stack, Center, Box,Button } from "@chakra-ui/react";
 import LogInComp from "./LogInComp";
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import RegistrationDialog from './RegistrationDialog';
 import { useContext } from 'react';
 import { AuthContext } from '../../../../AuthContext';
-
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import GoogleLoginPage from "./OuthLogin";
 
 
 function LogInPage() {
@@ -48,10 +48,10 @@ function LogInPage() {
   };
   
   const doLogin = (e) => {
-    const url = "/server_login"
+    const url = "/Login"
     const data = {
-      login: login,
-      password_hashed: password
+      user: login,
+      pass: password
     }
     axios.post(url, data,{ withCredentials: true})
       .then((res) => {
@@ -72,6 +72,9 @@ function LogInPage() {
       showToastMessage(isSuccess);
     }
   }, [isSuccess]);
+
+
+
   return (
     <ChakraProvider>
       <Center h='300px' color='black'>
@@ -105,6 +108,7 @@ function LogInPage() {
             <RegistrationDialog onClose={handleCloseDialog} setSuccess={setSuccess}/> 
             <ToastContainer />       
           </Center>
+          <GoogleLoginPage/>
         </Stack>
       </Center>
     </ChakraProvider>

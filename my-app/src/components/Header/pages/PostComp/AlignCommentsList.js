@@ -30,14 +30,15 @@ export default function AlignCommentsList(props) {
     const handleEditComment = (commentId) => {
       const comment = comments.find((item) => item.comment_id === commentId);
       handleSaveComment();
-      setEditedText(comment.body);
+      setEditedText(comment.comment_body);
       setSelectedCommentId(commentId);
       setOpen(true);
     };
 
     const handleDeleteComment = (commentId) => {
+      const postId = props.postId;
       axios
-        .delete(`/server_comments?id=${commentId}`)
+        .delete(`/removecomment/${postId}/${commentId}`)
         .then((response) => {
           window.location.reload();
           toast.success('Comment deleted successfully');
@@ -51,10 +52,10 @@ export default function AlignCommentsList(props) {
     const listItems = comments.map((item) => (
       <ListItem key={item.comment_id} alignItems="flex-start">
         <ListItemAvatar>
-          <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+          <Avatar alt="Remy Sharp" href="/static/images/avatar/1.jpg" />
         </ListItemAvatar>
         <ListItemText
-          primary={item.comment_by}
+          primary={item.comment_username}
           secondary={
             <React.Fragment>
               <Typography
@@ -63,7 +64,7 @@ export default function AlignCommentsList(props) {
                 variant="body2"
                 color="text.primary"
               >
-                {item.body}
+                {item.comment_body}
               </Typography>
               {item.isOwnerComment && (
                 <div>
@@ -83,13 +84,14 @@ export default function AlignCommentsList(props) {
   const handleSaveComment = () => {
     if (selectedCommentId && editedText.trim() !== '') {
       axios
-        .put(`/server_comments?comment_id=${selectedCommentId}`, {
+        .put(`/editcomment/${props.postId}/${selectedCommentId}`, {
           body: editedText.trim(),
         })
         .then((response) => {
           console.log(response.data);
           // Get the updated comment body from the response
           const updatedCommentBody = response.data.b;
+          window.location.reload();
   
           // Find the comment in the local state
           const updatedComments = comments.map((comment) => {

@@ -19,11 +19,11 @@ import axios from 'axios';
 
 const pages1 = ['About Me', 'Contact Me', 'New Post'];
 const pages2 = ['About Me', 'Contact Me'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Profile','Account', 'Dashboard', 'Logout'];
 const settings2 = ['Login'] 
 
 function ResponsiveAppBar() {
-  
+  axios.defaults.withCredentials = true
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate  = useNavigate();
@@ -33,15 +33,13 @@ function ResponsiveAppBar() {
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 
   const handleLogout = () => {
-    const url = '/server_logout';
-    const sessionId = document.cookie.split('; ').find(row => row.startsWith('session_id=')).split('=')[1];
+    const url = '/Logout';
     axios
-    .post(url, { session_id: sessionId },)
+    .post(url,)
       .then((res) => {
         // Reset the authentication status on the client-side
-        setIsAuthenticated(false);
         console.log(res);
-        navigate('/');
+        navigate('/Login');
       })
       .catch((err) => {
         console.error(err);
@@ -49,12 +47,17 @@ function ResponsiveAppBar() {
       });
   };
 
-  const handlers2 = [() => navigate('/login')]
+  const handlers2 = [() => navigate('/Login')]
   const handleProfile = () => {
     navigate('/profile')
   }
+
+  const handleAccount = () => {
+      navigate('/Account')
+  }
+
   const handlers1 = [() => handleProfile(),
-                     () => {},
+                     () =>handleAccount(),
                      () => {},
                      () => handleLogout()
                     ];   
@@ -94,7 +97,7 @@ function ResponsiveAppBar() {
     // Function to check authentication status
     const checkAuthentication = async () => {
       try {
-        const response = await axios.get('/server_check_login', {
+        const response = await axios.get('/GetUserProfile', {
           withCredentials: true, // Add this option to include cookies in the request
         });
   
@@ -102,6 +105,7 @@ function ResponsiveAppBar() {
         setIsAuthenticated(response.data.isAuthenticated);
       } catch (error) {
         console.error('Error checking authentication:', error);
+        navigate('/Login')
       }
     };
     checkAuthentication(); // Call the authentication check function when the component mounts

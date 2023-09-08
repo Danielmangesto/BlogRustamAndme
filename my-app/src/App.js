@@ -13,6 +13,7 @@ import { Box } from "@mui/system";
 import ContactForm from "./components/Header/pages/ContactForm";
 import { AuthProvider } from './AuthContext'
 import Profile from './components/Header/pages/Profile'
+import AccountPage from "./components/Header/pages/LogInAndPassPage/AccountPage";
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<AboutMe />} />
+                <Route path="/Account" element={<AccountPage/>}/>
                 <Route path='/newPost' element={<NewPost />} />
                 <Route path='/post/:id' element={<Post/>} />
                 <Route path="/login" element={<LogInPage />} />

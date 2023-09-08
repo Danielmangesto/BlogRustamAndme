@@ -20,7 +20,7 @@ import 'react-toastify/dist/ReactToastify.css';
 function MediaCard(props) {
   const [id, setId] = useState(props.id);
   const [isOwner, setIsOwner] = useState(props.isOwner);
-  const [postedBy, setPostedBy] = useState(props.postedBy);
+  const [postedBy, setPostedBy] = useState(props.posted_by);
   const [title, setTitle] = useState(props.title);
   const [text, setText] = useState(props.text);
   const [time, setTime] = useState(props.time);
@@ -43,7 +43,7 @@ function MediaCard(props) {
 
   const handleSaveEdit = () => {
       axios
-        .put(`/server_post?id=${id}`, {
+        .put(`https://127.0.0.1/add_post/${id}`, {
           body: editedText.trim(),
         })
         .then((response) => {
@@ -70,7 +70,7 @@ function MediaCard(props) {
 
   const handleDeletePost = () => {
     axios
-        .delete(`/server_post?id=${id}`)
+        .delete(`https://127.0.0.1:5000/post/${id}`)
         .then((response) => {
           setEditDialogOpen(false);
           window.location.reload();
