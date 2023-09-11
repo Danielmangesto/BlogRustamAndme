@@ -3,33 +3,40 @@ import logging
 import re
 import uuid
 from datetime import datetime, timedelta
-
 import requests
-from flask_login import UserMixin
 import bcrypt
 import boto3
 import mysql.connector as mysql
 import mysql.connector.pooling
 from botocore.exceptions import NoCredentialsError
-from flask import Flask, request, jsonify, abort, make_response, redirect
+from flask import Flask, request, jsonify, abort, make_response, redirect, url_for
 from flask_cors import CORS
-from settings import aws_access_key_id, aws_secret_access_key, bucket_name, local_db_endpoint, google_client_secret, \
-    google_client_id, google_redirect_uri, google_discovery_url
+from settings import aws_access_key_id, aws_secret_access_key, bucket_name, local_db_endpoint,google_secret,google_client_id
 from settings import dbpwd
-from flask_restful import Resource
-from oauthlib.oauth2 import WebApplicationClient
+from flask import Flask, redirect, url_for, session, request, jsonify
+from flask_oauthlib.client import OAuth
+import os
 
-# app = Flask(__name__)
-app = Flask(__name__,
-            static_folder='/home/ubuntu/build',
-            static_url_path='/')
 
-#CORS(app, supports_credentials=True,
-#     origins=["http://127.0.0.1:5000", "http://127.0.0.1:3000", "https://accounts.google.com"],
-#     expose_headers='Set-Cookie')
-CORS(app)
+
+app = Flask(__name__)
+#app = Flask(__name__,
+            #static_folder='/home/ubuntu/build',
+            #static_url_path='/')
+
+CORS(app, supports_credentials=True,
+     origins=["http://127.0.0.1:5000", "http://127.0.0.1:3000", "https://accounts.google.com"],
+     expose_headers='Set-Cookie')
+#CORS(app)
 
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
+
+####################variabels#####################
+app.secret_key = os.environ.get("SECRET_KEY") or os.urandom(24)
+google_redirect_uri = 'http://127.0.0.1:5000/OuthLogin'
+##################################################
+
+
 
 pool = mysql.connector.pooling.MySQLConnectionPool(
     host=local_db_endpoint,
@@ -226,6 +233,48 @@ file_handler.setFormatter(formatter)
 # Add the file handler to the logger
 logger.addHandler(file_handler)
 
+################google_auth#################
+oauth = OAuth(app)
+google = oauth.remote_app(
+    'google',
+    consumer_key=google_client_id,
+    consumer_secret=google_secret,
+    request_token_params={
+        'scope': 'email',
+    },
+    base_url='https://www.googleapis.com/oauth2/v1/',
+    request_token_url=None,
+    access_token_method='POST',
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+)
+
+
+@app.route('/OauthLogin',methods=['POST','OPTIONS'])
+def OauthLogin():
+    return google.authorize(callback=url_for('authorized', _external=True))
+
+@app.route('/login/authorized')
+def authorized():
+    response = google.authorized_response()
+    if response is None or response.get('access_token') is None:
+        return 'Login failed.'
+
+    session['google_token'] = (response['access_token'], '')
+    me = google.get('userinfo')
+    # Here, 'me.data' contains user information.
+    # You can perform registration process using this information if needed.
+
+    return redirect(url_for('Login'))
+
+# @oauth.tokengetter
+# def get_google_oauth_token():
+#     return session.get('google_token')
+
+##################################################################
+
+
+
 @app.route('/Login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -331,32 +380,115 @@ def manage_posts():
     else:
         return add_post()
 
-
-def get_all_posts():
+@app.route('/waiting_posts',methods=['GET'])
+def get_waiting_posts():
     session_id = request.cookies.get('session_id')
     if is_session_expired(session_id) or session_id is None:
         abort(401, "Please reconnect to see posts")
     db = pool.get_connection()
-    query = "SELECT p.id, p.title, i.image, p.body, p.user_id, p.publish_at, u.username, COUNT(c.id) AS comment_count FROM posts p LEFT JOIN images i ON p.image_id = i.id LEFT JOIN users u ON p.user_id = u.id LEFT JOIN comments c ON c.post_id = p.id GROUP BY p.id, p.title, i.image, p.body, p.user_id, p.publish_at, u.username;"
+    query = "SELECT p.id, p.title, i.image, p.body, p.user_id, p.publish_at,p.approved, u.username, COUNT(c.id) AS comment_count FROM posts p LEFT JOIN images i ON p.image_id = i.id LEFT JOIN users u ON p.user_id = u.id LEFT JOIN comments c ON c.post_id = p.id GROUP BY p.id, p.title, i.image, p.body, p.user_id, p.publish_at, u.username;"
 
     data = []
     cursor = db.cursor()
     cursor.execute(query)
     records = cursor.fetchall()
     cursor.close()
-    header = ['id', 'title', 'image_path', 'body', 'user_id', 'publish_at', 'posted_by', 'comments_count']
+    header = ['id', 'title', 'image_path', 'body', 'user_id', 'publish_at', 'approved', 'posted_by', 'comments_count']
     db.close()
 
     for r in records:
         record = list(r)
         record[5] = record[5].strftime('%Y-%m-%d %H:%M:%S')
-        data.append(dict(zip(header, record)))
+        if record[6] != 'yes':
+            data.append(dict(zip(header, record)))
+
+    return json.dumps(data, default=str)
+
+
+@app.route('/post_approve',methods=['POST'])
+def post_approve():
+    data = request.get_json()
+    post_id = data['postId']
+
+    session_id = request.cookies.get('session_id')
+    if is_session_expired(session_id) or session_id is None:
+        abort(401, "Please reconnect")
+    db = pool.get_connection()
+    query = "SELECT id FROM session WHERE session_id = %s "
+    insert_values = (session_id,)
+    cursor = db.cursor()
+    cursor.execute(query, insert_values)
+    user_id = cursor.fetchone()
+    cursor.close()
+    db.commit()
+
+    query = "SELECT user_id FROM posts WHERE id= %s"
+    cursor = db.cursor()
+    cursor.execute(query, (str(post_id),))
+    post_user_id = cursor.fetchone()
+    cursor.close()
+    db.commit()
+
+    if user_id != [] :
+        try:
+            update_query = "UPDATE posts SET approved = %s WHERE id = %s"
+            cursor = db.cursor()
+            cursor.execute(update_query, ('yes', str(post_id)))
+            cursor.close()
+            db.commit()
+            db.close()
+            resp = make_response(jsonify({"massage": "post approved successfully!"}))
+            return resp
+
+        except mysql.connector.Error as error:
+            resp = make_response(jsonify({"massage": error}))
+            return resp
+    db.close()
+    resp = make_response(jsonify({"message": "illegal"}))
+    resp.status_code = 400
+    return resp
+
+
+def get_all_posts():
+    session_id = request.cookies.get('session_id')
+    if is_session_expired(session_id) or session_id is None:
+        abort(401, "Please reconnect to see posts")
+
+    db = pool.get_connection()
+    query = "SELECT id FROM session WHERE session_id = %s "
+    insert_values = (session_id,)
+    cursor = db.cursor()
+    cursor.execute(query, insert_values)
+    user_id = cursor.fetchone()
+    cursor.close()
+    db.commit()
+
+
+
+    query = "SELECT p.id, p.title, i.image, p.body, p.user_id, p.publish_at,p.approved, u.username, COUNT(c.id) AS comment_count FROM posts p LEFT JOIN images i ON p.image_id = i.id LEFT JOIN users u ON p.user_id = u.id LEFT JOIN comments c ON c.post_id = p.id GROUP BY p.id, p.title, i.image, p.body, p.user_id, p.publish_at, u.username;"
+
+    data = []
+    cursor = db.cursor()
+    cursor.execute(query)
+    records = cursor.fetchall()
+    cursor.close()
+    header = ['id', 'title', 'image_path', 'body', 'user_id', 'publish_at','approved', 'posted_by', 'comments_count','isOwner']
+    db.close()
+
+    for r in records:
+        record = list(r)
+        record[5] = record[5].strftime('%Y-%m-%d %H:%M:%S')
+        is_owner = user_id[0] == record[4]
+        if record[6] != 'no':
+            record.append(is_owner)
+            data.append(dict(zip(header, record)))
 
     return json.dumps(data, default=str)
 
 
 @app.route('/post/<int:id>', methods=['GET'])
 def get_post(id):
+    session_id = request.cookies.get('session_id')
     session_id = request.cookies.get('session_id')
     if is_session_expired(session_id) or session_id is None:
         # db.close()
@@ -380,9 +512,11 @@ def get_post(id):
     db.close()
 
     post_data = records[0]
-    post_header = ['post_id', 'title', 'image_id', 'body', 'post_user_id', 'publish_at', 'image', 'post_username']
+    post_header = ['post_id', 'title', 'image_id', 'body', 'post_user_id', 'publish_at', 'image', 'post_username','isOwner']
     post_data = list(post_data)
+    is_owner = post_data[0] == post_data[4]
     post_data[5] = post_data[5].strftime('%Y-%m-%d %H:%M:%S')
+    post_data.append(is_owner)
     post_data_dict = dict(zip(post_header, post_data))
 
     # Extract comments data from the remaining records
@@ -424,6 +558,16 @@ def add_post():
     db.commit()
     cursor.close()
 
+    query = "SELECT u.role FROM users u LEFT JOIN session s ON u.id = s.id WHERE s.session_id = %s"
+    values = (session_id,)
+    cursor = db.cursor()
+    cursor.execute(query, values)
+    current_role = cursor.fetchone()
+    cursor.close()
+
+    approved = 'no'
+    if current_role[0] == 'admin':
+        approved = 'yes'
     if image and allowed_file(image.filename):
         try:
             s3 = boto3.client(
@@ -443,8 +587,9 @@ def add_post():
             cursor.close()
             db.commit()
 
-            insert_post_query = "INSERT INTO posts (title, body, image_id,user_id, publish_at) VALUES (%s, %s,%s, %s, NOW())"
-            insert_post_values = (title, body, image_id, id_record[0][0])
+
+            insert_post_query = "INSERT INTO posts (title, body, image_id,user_id, publish_at,approved) VALUES (%s, %s,%s, %s, NOW(),%s)"
+            insert_post_values = (title, body, image_id, id_record[0][0],approved)
             cursor = db.cursor()
             cursor.execute(insert_post_query, insert_post_values)
             db.commit()
@@ -457,8 +602,8 @@ def add_post():
         except NoCredentialsError:
             return "AWS credentials not available."
     else:
-        insert_post_query = "INSERT INTO posts (title, body,user_id, publish_at) VALUES (%s, %s,%s, NOW())"
-        insert_post_values = (title, body, id_record[0][0])
+        insert_post_query = "INSERT INTO posts (title, body,user_id, publish_at,approved) VALUES (%s, %s,%s, NOW(),%s)"
+        insert_post_values = (title, body, id_record[0][0],approved)
         cursor = db.cursor()
         cursor.execute(insert_post_query, insert_post_values)
         db.commit()
@@ -562,6 +707,7 @@ def get_all_comments(id):
         return jsonify(error='Invalid post ID')
 
 
+
 @app.route('/removecomment/<int:post_id>/<int:comment_id>', methods=['DELETE'])
 def remove_comment(post_id, comment_id):
     session_id = request.cookies.get('session_id')
@@ -603,7 +749,7 @@ def remove_comment(post_id, comment_id):
     return resp
 
 
-@app.route('/remove_post/<int:post_id>', methods=['POST'])
+@app.route('/post/<int:post_id>', methods=['DELETE'])
 def remove_post(post_id):
     session_id = request.cookies.get('session_id')
     if is_session_expired(session_id) or session_id is None:

@@ -47,7 +47,7 @@ function NewPost() {
 
 const addPost = () => {
     return new Promise((resolve, reject) => {
-        const url = `/Posts/`;
+        const url = `http://127.0.0.1:5000/Posts/`;
 
         const formData = new FormData();
         formData.append('title', title);

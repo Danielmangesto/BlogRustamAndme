@@ -33,7 +33,7 @@ function ResponsiveAppBar() {
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 
   const handleLogout = () => {
-    const url = '/Logout';
+    const url = 'http://127.0.0.1:5000/Logout';
     axios
     .post(url,)
       .then((res) => {
@@ -97,7 +97,7 @@ function ResponsiveAppBar() {
     // Function to check authentication status
     const checkAuthentication = async () => {
       try {
-        const response = await axios.get('/GetUserProfile', {
+        const response = await axios.get('http://127.0.0.1:5000/GetUserProfile', {
           withCredentials: true, // Add this option to include cookies in the request
         });
   

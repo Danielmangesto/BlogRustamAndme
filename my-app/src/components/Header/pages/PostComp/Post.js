@@ -17,7 +17,7 @@ function Post() {
   const [inputComment, setInputComment] = useState('');
 
   useEffect(() => {
-    const url = `/post/${id}`;
+    const url = `http://127.0.0.1:5000/post/${id}`;
     axios
       .get(url, { withCredentials: true },{headers: {'Access-Control-Allow-Origin': '*'}})
       .then((res) => {
@@ -36,7 +36,7 @@ function Post() {
   };
 
   const handleAddComment = () => {
-    const url = `/add_comment`;
+    const url = `http://127.0.0.1:5000/add_comment`;
     const data = {
       post_id: id,
       comment: inputComment,
@@ -81,7 +81,7 @@ function Post() {
 
       <p className="post-content">{post.body}</p>
       <p></p>
-      <p>Posted {post.published}</p>
+      <p>Posted {post.publish_at}</p>
       <AlignCommentsList postId={id} comments={comments} setComments={setComments} handleAddComment={handleAddComment}/>
       <div>
         {isSignedIn ? 

@@ -10,6 +10,7 @@ import { AuthContext } from '../../../../AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GoogleLoginPage from "./OuthLogin";
+import GoogleLoginv2 from "./GoogleLoginv2";
 
 
 function LogInPage() {
@@ -48,7 +49,7 @@ function LogInPage() {
   };
   
   const doLogin = (e) => {
-    const url = "/Login"
+    const url = "http://127.0.0.1:5000/Login"
     const data = {
       user: login,
       pass: password
@@ -108,7 +109,8 @@ function LogInPage() {
             <RegistrationDialog onClose={handleCloseDialog} setSuccess={setSuccess}/> 
             <ToastContainer />       
           </Center>
-          <GoogleLoginPage/>
+          {/*<GoogleLoginPage/>*/}
+          <GoogleLoginv2/>
         </Stack>
       </Center>
     </ChakraProvider>

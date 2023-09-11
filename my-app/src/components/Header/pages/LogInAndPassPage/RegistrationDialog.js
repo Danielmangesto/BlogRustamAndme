@@ -106,7 +106,7 @@ export default function RegistrationDialog(props) {
   
 
   const doRegistration = (e) => {
-    const url = "/server_registration"
+    const url = "http://127.0.0.1:5000/server_registration"
     const data = {
       name:nameRegist,  
       login: loginRegist,
@@ -126,7 +126,7 @@ export default function RegistrationDialog(props) {
   }
  
   const checkIfExist = async (loginUser) => {
-    const url = `/server_user/${loginUser}`;
+    const url = `http://127.0.0.1:5000/server_user/${loginUser}`;
     try {
       const response = await axios.get(url);
       console.log("Received specific user:", response.data);

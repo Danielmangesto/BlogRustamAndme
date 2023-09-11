@@ -43,7 +43,7 @@ function MediaCard(props) {
 
   const handleSaveEdit = () => {
       axios
-        .put(`https://127.0.0.1/add_post/${id}`, {
+        .put(`https://127.0.0.1:5000/add_post/${id}`, {
           body: editedText.trim(),
         })
         .then((response) => {
@@ -70,7 +70,7 @@ function MediaCard(props) {
 
   const handleDeletePost = () => {
     axios
-        .delete(`https://127.0.0.1:5000/post/${id}`)
+        .delete(`http://127.0.0.1:5000/post/${id}`)
         .then((response) => {
           setEditDialogOpen(false);
           window.location.reload();
