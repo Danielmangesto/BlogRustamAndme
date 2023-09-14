@@ -43,7 +43,7 @@ function MediaCard(props) {
 
   const handleSaveEdit = () => {
       axios
-        .put(`https://127.0.0.1:5000/add_post/${id}`, {
+        .put(`http://127.0.0.1:5000/edit_post/${id}`, {
           body: editedText.trim(),
         })
         .then((response) => {

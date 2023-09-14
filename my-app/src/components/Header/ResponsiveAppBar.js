@@ -31,6 +31,7 @@ function ResponsiveAppBar() {
                       () => navigate('/contact'),
                       () => navigate('/newPost')]
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+  const [ UserImage, setUserImage ] = React.useState("/static/images/avatar/2.jpg")
 
   const handleLogout = () => {
     const url = 'http://127.0.0.1:5000/Logout';
@@ -103,6 +104,7 @@ function ResponsiveAppBar() {
   
         // Assuming the response contains a boolean field named 'isAuthenticated'
         setIsAuthenticated(response.data.isAuthenticated);
+        setUserImage(response.data.image)
       } catch (error) {
         console.error('Error checking authentication:', error);
         navigate('/Login')
@@ -220,7 +222,7 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt="Remy Sharp" src={isAuthenticated ? UserImage : "/static/images/avatar/2.jpg"} />
               </IconButton>
             </Tooltip>
             <Menu

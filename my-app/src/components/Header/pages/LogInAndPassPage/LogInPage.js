@@ -11,6 +11,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GoogleLoginPage from "./OuthLogin";
 import GoogleLoginv2 from "./GoogleLoginv2";
+import OuthLogin from "./OuthLogin";
 
 
 function LogInPage() {
@@ -110,7 +111,8 @@ function LogInPage() {
             <ToastContainer />       
           </Center>
           {/*<GoogleLoginPage/>*/}
-          <GoogleLoginv2/>
+          *<GoogleLoginv2/>
+          {/*<OuthLogin/>*/}
         </Stack>
       </Center>
     </ChakraProvider>
