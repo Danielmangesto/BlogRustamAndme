@@ -14,6 +14,10 @@ import ContactForm from "./components/Header/pages/ContactForm";
 import { AuthProvider } from './AuthContext'
 import Profile from './components/Header/pages/Profile'
 import AccountPage from "./components/Header/pages/LogInAndPassPage/AccountPage";
+import ForgotPassword from "./components/Header/pages/LogInAndPassPage/ForgotPassword";
+import ResetVerification from "./components/Header/pages/LogInAndPassPage/ResetVerification";
+import PasswordReset from "./components/Header/pages/LogInAndPassPage/ChangePassword";
+import ChangePassword from "./components/Header/pages/LogInAndPassPage/ChangePassword";
 
 
 function App() {
@@ -36,6 +40,9 @@ function App() {
                 <Route path="/login" element={<LogInPage />} />
                 <Route path="/contact" element={<ContactForm />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/reset" element={<ForgotPassword/>}/>
+                <Route path="/verifyToken" element={<ResetVerification/>}/>
+                <Route path="/pwdReset" element={<ChangePassword/>}/>
             </Routes>
           </div> 
         </BrowserRouter>

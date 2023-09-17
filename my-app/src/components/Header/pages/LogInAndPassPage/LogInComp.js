@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Input } from "@chakra-ui/react";
+import { Input } from "@chakra-ui/react";
 
 function LogInComp(props) {
   const handleChange = (event) => {
@@ -9,14 +9,16 @@ function LogInComp(props) {
   };
 
   return (
-   
-      <Input
-        value={props.login}
-        onChange={handleChange}
-        placeholder="Login"
-        size="md"
-      />
-
+    <Input
+      value={props.login}
+      onChange={handleChange}
+      onFocus={props.onFocus}
+      onBlur={props.onBlur}
+      placeholder="Login"
+      size="md"
+      className={props.isFocused ? "focused" : ""}
+    />
   );
 }
+
 export default LogInComp;

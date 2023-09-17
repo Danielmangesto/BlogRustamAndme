@@ -1,45 +1,124 @@
-import * as React from 'react';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
-import FiberNewSharpIcon from '@mui/icons-material/FiberNewSharp';
+import React, { useLayoutEffect ,useState, useEffect } from 'react';
+import axios from 'axios';
+import styles from './styles.module.scss'
+import {
+  useSpringRef,
+  animated,
+  useTransition,
+  useSpring,
+} from '@react-spring/web'
 import { useNavigate } from 'react-router-dom';
+import { FaHeart } from 'react-icons/fa';
+import { IconContext } from "react-icons";
+
 
 function PopularBlogs(){
 
     const navigate = useNavigate();
 
-    const BlogsPostList = (props) => {
-        const blogs = props.blogs;
-        const listItems = blogs.map((item) =>(
-            <ListItem key={item.number} disablePadding divider>
-            <ListItemButton onClick ={()=> navigate(`${item.link}`)}>
-              <ListItemIcon>
-                <FiberNewSharpIcon />
-              </ListItemIcon>
-              <ListItemText primary={`Blog #${item.number}`} />
-            </ListItemButton>
-          </ListItem>    
-        ));
-        return <div>{listItems}</div>;
+    const [threePopularPosts, setPosts] = useState([]);
+    const [activeIndex, setActiveIndex] = useState(0)
+    const springApi = useSpringRef()
+    const [loading, setLoading] = useState(true);
+
+
+  const transitions = useTransition(activeIndex, {
+    from: {
+      clipPath: 'polygon(0% 0%, 0% 100%, 0% 100%, 0% 0%)',
+    },
+    enter: {
+      clipPath: 'polygon(0% 0%, 0% 100%, 100% 100%, 100% 0%)',
+    },
+    leave: {
+      clipPath: 'polygon(100% 0%, 100% 100%, 100% 100%, 100% 0%)',
+    },
+    onRest: (_springs, _ctrl, item) => {
+      if (activeIndex === item) {
+        setActiveIndex(activeIndex === threePopularPosts.length - 1 ? 0 : activeIndex + 1)
+      }
+    },
+    exitBeforeEnter: true,
+    config: {
+      duration: 4000,
+    },
+    delay: 1000,
+    ref: springApi,
+  })
+
+  const springs = useSpring({
+    from: {
+      strokeDashoffset: 120,
+    },
+    to: {
+      strokeDashoffset: 0,
+    },
+    config: {
+      duration: 11000,
+    },
+    loop: true,
+    ref: springApi,
+  })
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('/server_three_popular', { withCredentials: true });
+        setPosts(response.data);
+      } catch (error) {
+        console.error('Error fetching latest posts:', error);
+      } finally {
+        setLoading(false); // Set loading to false after the data has been fetched (whether successful or not)
+      }
     };
+    fetchData();
+  }, []);
 
-    const blogs =[
-        {number: 1, link:'/post/1'},
-        {number: 2, link:'/post/2'},
-        {number: 3, link:'/post/3'}
-    ];
+ useLayoutEffect(() => {
+   springApi.start()
+ }, [activeIndex])
 
-    return (
-        <div className="card" id="popular">
-            <h2>Popular</h2>
-            <div className="insidelateset">
-                <Divider />
-                <BlogsPostList blogs={blogs} /> 
-            </div>
+ return (
+    <div>
+      <h2>Popular</h2>
+      <div className={styles.container}>
+        <div className={styles.container__inner}>
+        {transitions((springs, item) => (
+            <animated.div className={styles.img__container} style={springs} key={item}>
+                {loading ? (
+                    <h2>loading...</h2>
+                ) : (
+                  <div>
+                        <img src={threePopularPosts[item]["image"]} style={{
+                            width: '100%', // Makes the image fill its container
+                            height: '150%', // Makes the image fill its container
+                            objectFit: 'cover' // Ensures the image covers the container
+                        }}  alt="Image" />
+                        <div style={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            color: '#fff',
+                            background: 'rgba(0, 0, 0, 0.5)',
+                            padding: '10px'
+                        }}>
+                            {threePopularPosts[item]["title"]}
+                            <br></br>
+
+                            <IconContext.Provider value={{ color: "red"}}>
+                                <div>
+                                    {threePopularPosts[item]["likes"] + " "}
+                                    <FaHeart />
+                                </div>
+                            </IconContext.Provider>
+                        </div>
+                    </div>
+                )}
+            </animated.div>
+        ))}
         </div>
-    );
+      </div>
+    </div>
+  );
 }
 export default PopularBlogs;

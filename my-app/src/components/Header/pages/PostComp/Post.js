@@ -17,7 +17,7 @@ function Post() {
   const [inputComment, setInputComment] = useState('');
 
   useEffect(() => {
-    const url = `http://127.0.0.1:5000/post/${id}`;
+    const url = `/post/${id}`;
     axios
       .get(url, { withCredentials: true },{headers: {'Access-Control-Allow-Origin': '*'}})
       .then((res) => {
@@ -36,7 +36,7 @@ function Post() {
   };
 
   const handleAddComment = () => {
-    const url = `http://127.0.0.1:5000/add_comment`;
+    const url = `/add_comment`;
     const data = {
       post_id: id,
       comment: inputComment,

@@ -16,9 +16,10 @@ import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../../AuthContext';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 
-const pages1 = ['About Me', 'Contact Me', 'New Post'];
-const pages2 = ['About Me', 'Contact Me'];
+const pages1 = ['About Us', 'Contact Us', 'New Post'];
+const pages2 = ['About Us', 'Contact us'];
 const settings = ['Profile','Account', 'Dashboard', 'Logout'];
 const settings2 = ['Login'] 
 
@@ -32,9 +33,10 @@ function ResponsiveAppBar() {
                       () => navigate('/newPost')]
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
   const [ UserImage, setUserImage ] = React.useState("/static/images/avatar/2.jpg")
+    const currentPath = window.location.pathname;
 
   const handleLogout = () => {
-    const url = 'http://127.0.0.1:5000/Logout';
+    const url = '/Logout';
     axios
     .post(url,)
       .then((res) => {
@@ -95,23 +97,27 @@ function ResponsiveAppBar() {
 
 
   React.useEffect(() => {
-    // Function to check authentication status
+
     const checkAuthentication = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/GetUserProfile', {
-          withCredentials: true, // Add this option to include cookies in the request
+        const response = await axios.get('/profile', {
+          withCredentials: true,
         });
-  
-        // Assuming the response contains a boolean field named 'isAuthenticated'
+
         setIsAuthenticated(response.data.isAuthenticated);
         setUserImage(response.data.image)
+          if ((currentPath !== "/pwdReset") && (currentPath !== "/verifyToken")) {
+              navigate('/')
+          }
       } catch (error) {
         console.error('Error checking authentication:', error);
-        navigate('/Login')
+        if ((currentPath !== "/reset") && (currentPath !=="/verifyToken")) {
+            navigate('/Login')
+        }
       }
     };
     checkAuthentication(); // Call the authentication check function when the component mounts
-  }, [setIsAuthenticated]);
+  }, [setIsAuthenticated,setUserImage]);
   
   return (
     <AppBar position="static">

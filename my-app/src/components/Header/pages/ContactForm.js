@@ -1,19 +1,23 @@
 import { useState } from "react";
-import * as React from 'react';
+import { useHistory } from "react-router-dom"; // Import useHistory from react-router-dom
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/joy/Stack';
+import {useNavigate} from 'react-router-dom'
 
-const FORM_ENDPOINT = ""; // TODO - fill on the later step
+const FORM_ENDPOINT = "";
 
 const ContactForm = () => {
   const [submitted, setSubmitted] = useState(false);
+  const navigate = useNavigate();
+
   const handleSubmit = () => {
+    setSubmitted(true);
     setTimeout(() => {
-      setSubmitted(true);
-    }, 100);
+     navigate('/')
+    }, 2000);
   };
 
   if (submitted) {
@@ -31,50 +35,50 @@ const ContactForm = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        
       }}
     >
-    <Stack spacing={2}>
+      <Stack spacing={2}>
         <div className="mb-3 pt-0">
-      <TextField
-        sx={{
-                width:400
-            }}
-        id="outlined-multiline-flexible"
-        label="Your name"
-        multiline
-        maxRows={4}
-        />
-      </div>
-      <div className="mb-3 pt-0">
-        <TextField
+          <TextField
             sx={{
-                width:400
+              width: 400
             }}
-          id="outlined-multiline-flexible"
-          label="Your eMail"
-          multiline
-          maxRows={4}
-        />
-      </div>
-      <div className="mb-3 pt-0">
-        <TextField
+            id="outlined-multiline-flexible"
+            label="Your name"
+            multiline
+            maxRows={4}
+            margin="normal"
+          />
+        </div>
+        <div className="mb-3 pt-0">
+          <TextField
             sx={{
-                width:400
+              width: 400
             }}
-          id="outlined-multiline-static"
-          label="Multiline"
-          multiline
-          rows={4}
-        />
-      </div>
-      <div className="mb-3 pt-0">
-      <Button variant="contained" endIcon={<SendIcon />}>
-        Send
-      </Button>
-      </div>
-    </Stack>
-    </Box> 
+            id="outlined-multiline-flexible"
+            label="Your eMail"
+            multiline
+            maxRows={4}
+          />
+        </div>
+        <div className="mb-3 pt-0">
+          <TextField
+            sx={{
+              width: 400
+            }}
+            id="outlined-multiline-static"
+            label="Multiline"
+            multiline
+            rows={4}
+          />
+        </div>
+        <div className="mb-3 pt-0">
+          <Button variant="contained" onClick={handleSubmit} endIcon={<SendIcon />} style={{ marginBottom: '10px' }}>
+            Send
+          </Button>
+        </div>
+      </Stack>
+    </Box>
   );
 };
 

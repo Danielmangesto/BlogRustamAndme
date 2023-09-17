@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react'
 
 function PasswordInput(props) {
@@ -20,6 +20,8 @@ function PasswordInput(props) {
           type={show ? 'text' : 'password'}
           placeholder='Password'
           onChange={handleChange}
+          onFocus={props.onFocus}
+          onBlur={props.onBlur}
         />
         <InputRightElement width='4.5rem'>
           <Button h='1.75rem' size='sm' onClick={handleClick}>

@@ -38,7 +38,7 @@ export default function AlignCommentsList(props) {
     const handleDeleteComment = (commentId) => {
       const postId = props.postId;
       axios
-        .delete(`http://127.0.0.1:5000/removecomment/${postId}/${commentId}`)
+        .delete(`/removecomment/${postId}/${commentId}`)
         .then((response) => {
           window.location.reload();
           toast.success('Comment deleted successfully');
@@ -84,7 +84,7 @@ export default function AlignCommentsList(props) {
   const handleSaveComment = () => {
     if (selectedCommentId && editedText.trim() !== '') {
       axios
-        .put(`http://127.0.0.1:5000/editcomment/${props.postId}/${selectedCommentId}`, {
+        .put(`/editcomment/${props.postId}/${selectedCommentId}`, {
           body: editedText.trim(),
         })
         .then((response) => {

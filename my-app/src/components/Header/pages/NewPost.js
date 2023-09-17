@@ -47,7 +47,7 @@ function NewPost() {
 
 const addPost = () => {
     return new Promise((resolve, reject) => {
-        const url = `http://127.0.0.1:5000/Posts/`;
+        const url = `/Posts/`;
 
         const formData = new FormData();
         formData.append('title', title);
@@ -132,7 +132,7 @@ const handleInputChange = (e) => {
                         Post
                     </Button>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        <Button onClick={handleImageUpload} variant="contained">
+                        <Button onClick={handleImageUpload} variant="contained" style={{ marginBottom: '10px' }}>
                             Upload Image
                         </Button>
                         <input

@@ -16,7 +16,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import Heart from "react-animated-heart";
+import Box from '@mui/material/Box';
 function MediaCard(props) {
   const [id, setId] = useState(props.id);
   const [isOwner, setIsOwner] = useState(props.isOwner);
@@ -29,7 +30,9 @@ function MediaCard(props) {
   const [commentsCount, setCommentsCount] = useState(props.commentsCount);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editedText, setEditedText] = useState('');
-
+  const [numOfLikes, setNumOfLikes] = useState(props.likes);
+  const [isLiked, setLike] = useState(props.isLiked);
+  const[isAuthenticated] = useState(props.isAuthenticated);
   const navigate = useNavigate();
 
   const handleEditPost = () => {
@@ -43,7 +46,7 @@ function MediaCard(props) {
 
   const handleSaveEdit = () => {
       axios
-        .put(`http://127.0.0.1:5000/edit_post/${id}`, {
+        .put(`/edit_post/${id}`, {
           body: editedText.trim(),
         })
         .then((response) => {
@@ -58,10 +61,6 @@ function MediaCard(props) {
           toast.error('Failed to update post');
           console.error(error);
         });
-    
-    // Send the edited post to the backend and save it
-    // You can implement the API call here or pass the data to a parent component for handling
-    // After successfully saving the edited post, update the state and close the dialog
   };
 
   const handleEditDialogChange = (e) => {
@@ -70,7 +69,7 @@ function MediaCard(props) {
 
   const handleDeletePost = () => {
     axios
-        .delete(`http://127.0.0.1:5000/post/${id}`)
+        .delete(`/post/${id}`)
         .then((response) => {
           setEditDialogOpen(false);
           window.location.reload();
@@ -82,6 +81,28 @@ function MediaCard(props) {
         });
   };
 
+  const handleClickedLikeButton = () =>{
+    setLike(!isLiked);
+    if(!isLiked){
+      setNumOfLikes(numOfLikes + 1);
+    }else{
+      setNumOfLikes(numOfLikes - 1);
+    }
+    axios
+        .post(`/server_like`, {
+          post_id: id,
+          is_liked: !isLiked
+        }, {
+          withCredentials: true  // Include credentials with the request
+        })
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          toast.error('Failed to update post');
+          console.error(error);
+        });
+  }
   return (
     <div>
       <Divider />
@@ -107,6 +128,21 @@ function MediaCard(props) {
           <Button size="small" color="primary">
             Comments({commentsCount})
           </Button>
+		  <Box sx={{
+            p: 0, // Sets padding
+            m: 0, // Sets margin
+            border: 1, // Adds a border
+            borderRadius: 1, // Sets border radius
+            textAlign: 'center', // Aligns text to center
+            backgroundColor: '#e6396d', // Sets background color (uses theme colors)
+          }}>
+            <Typography color="white">
+              {numOfLikes} Likes
+            </Typography>
+          </Box>
+          {isAuthenticated && (
+            <Heart isClick={isLiked} onClick={handleClickedLikeButton} />
+          )}
           {isOwner && (
             <div>
               <Button onClick={handleEditPost} size="small" color="primary">

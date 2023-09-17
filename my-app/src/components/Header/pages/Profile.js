@@ -32,7 +32,7 @@ function Profile() {
   };
 
   const getAllPosts = () => {
-    const url = 'http://127.0.0.1:5000/Posts/';
+    const url = '/Posts/';
     axios
       .get(url, {withCredentials: true})
       .then((res) => {

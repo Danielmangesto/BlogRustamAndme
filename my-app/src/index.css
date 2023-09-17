@@ -23,9 +23,9 @@ code {
 }
 
 body {
-  font-family: Arial;
+  font-family: Arial, serif;
   padding: 20px;
-  background: #ffdeb2;
+  background: #346b80;
 }
 
 /* Header/Blog Title */
@@ -56,7 +56,7 @@ body {
 
 .login {
   background-color: #0080ff;
-  
+
   padding: 8px 12px;
   border: none;
   border-radius: 4px;
@@ -65,7 +65,7 @@ body {
   padding: 30px;
   font-size: 40px;
   text-align: center;
-  
+
   height: 10%;
 }
 
@@ -149,4 +149,318 @@ h1{
 
 .forgot-link:hover {
   text-decoration: underline;
+}
+
+.backgPanda{
+  position: relative;
+       }
+
+.loginPanda{
+  height:220px;
+  width: 280px;
+  background-color: white;
+  position: relative;
+  top:190px;
+  left:25px;
+  padding-left: 30px;
+  box-sizing: border-box;
+  z-index: 1;
+  padding-top: 50px;
+
+
+}
+.frm{
+  position: relative;
+  top:50px;
+
+}
+.facePanda{
+  height: 120px;
+  width: 135px;
+  background-color: white;
+  border-radius:120px 120px 90px 90px;
+  justify-content: center;
+  position: relative;
+  bottom: 0;
+  left: 85px;
+}
+.earlPanda,.earrPanda{
+  background-color: #4d4449;
+  height: 40px;
+  width: 45px;
+  border-radius: 43px 43px 0 0;
+  left: 80px;
+}
+.earlPanda{
+  transform: rotate(-38deg);
+  -webkit-transform: rotate(-38deg);
+  position: relative;
+  top:71px;
+  right: 2px;
+}
+.earrPanda{
+  transform: rotate(38deg);
+  -webkit-transform: rotate(38deg);
+  position: relative;
+  bottom:-30px;
+  left:176px;
+}
+.pandaContainer {
+  display: flex;
+  align-items: center; /* Vertically center panda elements */
+}
+.pandaPanda{
+  position: relative;
+  bottom:190px;
+  left:100px;
+
+}
+.eyelPanda,.eyerPanda{
+  background-color: #4d4449;
+  height: 35px;
+  width: 32px;
+  border-radius:32px;
+  position: relative;
+}
+.eyelPanda{
+  top:5px;
+  left:22px;
+  transform:rotate(-20deg);
+  -webkit-transform:rotate(-20deg);
+
+}
+.eyerPanda{
+  transform: rotate(20deg);
+  -webkit-transform: rotate(20deg);
+  bottom:31px;
+  left:80px;
+}
+.blshlPanda,.blshrPanda{
+  background-color:#ff9999;
+  height: 16px;
+  width:22px;
+  border-radius: 50%;
+  position: relative;
+  opacity: 0.8;
+}
+.blshlPanda{
+  transform: rotate(25deg);
+  -webkit-transform: rotate(25deg);
+  position: relative;
+  top:64px;
+  left:17px;
+}
+.blshrPanda{
+  transform: rotate(-25deg);
+  -webkit-transform: rotate(-25deg);
+  position: relative;
+  top:46px;
+  left:95px;
+}
+.eyeball1Panda,.eyeball2Panda{
+  height: 10px;
+  width: 10px;
+  background-color: white;
+  border-radius: 50%;
+  position: relative;
+  transition:1s all;
+  -webkit-transition:1s all;
+}
+.eyeball1Panda{
+  left:10px;
+  top:10px;
+  transform: rotate(20deg);
+  -webkit-transform: rotate(20deg);
+}
+.eyeball2Panda{
+  left:10px;
+  top:10px;
+  transform: rotate(-20deg);
+  -webkit-transform: rotate(-20deg);
+}
+.nosePanda{
+  height:17px;
+  width: 17px;
+  background-color: #4d4449;
+  border-radius: 20px 0 4px;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  position: relative;
+  bottom: 30px;
+  left:60px;
+}
+.linePanda{
+  background-color: #4d4449;
+  height:10px;
+  width:2px;
+  position: relative;
+  transform:rotate(-45deg);
+  -webkit-transform:rotate(-45deg);
+  left:19px;
+  top:15px;
+
+}
+.mPanda,.mmPanda{
+  background-color: #4d4449;
+  height:8px;
+  width: 15px;
+  border-radius:0 0 8px 8px;
+  position: relative;
+
+}
+.mPanda{
+  bottom: 21px;
+  left:53px;
+}
+.m1Panda{
+  height: 6px;
+  width: 13px;
+  background-color: white;
+  border-radius: 0 0 10px 10px;
+  position: relative;
+  left:1px;
+  bottom:1px;
+}
+.mmPanda{
+  bottom: 30px;
+  left:69px;
+}
+.handlPanda,.handrPanda{
+  background-color:#4d4449;
+  height:45px;
+  width: 35px;
+  border-radius:10px 10px 30px 30px;
+  z-index: 2;
+  transition:1s all;
+  -webkit-transition:1s all;
+}
+.handlPanda{
+  position: relative;
+  bottom: -290px;
+  left: 30px;
+}
+.handrPanda{
+  position: relative;
+  bottom:-245px;
+  left:250px;
+}
+.pawlPanda,.pawrPanda{
+  background-color: #4d4449;
+  height: 50px;
+  width: 50px;
+  border-radius: 40px 40px 20px 20px;
+  position: relative;
+  z-index: 2;
+
+}
+.pawlPanda{
+  top:70px;
+  left:-200px;
+  transition:1s all;
+  -webkit-transition:1s all;
+}
+.pawrPanda{
+  top:70px;
+  left:-10px;
+  transition:1s all;
+  -webkit-transition:1s all;
+}
+.p1Panda{
+  background-color: white;
+  height: 25px;
+  width: 30px;
+  position: relative;
+  top:21px;
+  left:10px;
+  border-radius: 25px 25px 10px 10px;
+}
+.p2Panda,.p3Panda,.p4Panda{
+  background-color:white;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  position: relative;
+}
+.p2Panda{
+  bottom:13px;
+  left:10px;
+}
+.p3Panda{
+  bottom:17px;
+  right:3px;
+}
+.p4Panda{
+  bottom:27px;
+  left:22px;
+}
+span{
+  color:#4d4449;
+    font-family: 'Ubuntu', sans-serif;
+}
+input{
+  color: #4d4449;
+  width: 180px;
+  border:none;
+  outline: none;
+  border-bottom: 1px solid #4d4449;
+  font-family: 'Ubuntu', sans-serif;
+}
+.fa{
+color:#4d4449;
+font-size: 20px;
+outline: none;
+}
+
+#loginColor {
+  background-color: #19e6b3; /* Use background-color instead of color */
+}
+
+.loginFocusedEyeball1Panda{
+  top: 20px;
+	left: 13px;
+}
+.loginFocusedEyeball2Panda{
+  top: 20px;
+	left: 8px;
+}
+.passwordFocusedHandl{
+  transform: rotate(-150deg);
+	bottom: -290px;
+	left:88px;
+	height:90px;
+	width:40px;
+}
+.passwordFocusedHandr{
+  transform: rotate(150deg);
+	bottom: -200px;
+	left: 177px;
+	height: 90px;
+	width: 40px;
+}
+.passwordFocusedPawl,
+.passwordFocusedPawr{
+  top: 110px;
+}
+
+.animation, .animation_layer{
+  height:100%;
+}
+.animation{
+  display: block;
+  position: relative;
+  z-index: 10;
+}
+.animation_layer{
+  background-position: bottom center;
+  background-size: 100%;
+  background-repeat: repeat-x;
+  width: 100%;
+  position: relative;
+}
+.animation_layer.parallax{
+  position: fixed;
+}
+
+#aboutUs{
+  background: #253237;
 }

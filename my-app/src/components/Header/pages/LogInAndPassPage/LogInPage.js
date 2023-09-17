@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PasswordInput from './PasswordInput';
-import { ChakraProvider, Stack, Center, Box,Button } from "@chakra-ui/react";
+import {ChakraProvider, Stack, Center, Box, Button} from "@chakra-ui/react";
+import { extendTheme } from '@chakra-ui/react'
 import LogInComp from "./LogInComp";
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
@@ -9,9 +10,9 @@ import { useContext } from 'react';
 import { AuthContext } from '../../../../AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import GoogleLoginPage from "./OuthLogin";
 import GoogleLoginv2 from "./GoogleLoginv2";
-import OuthLogin from "./OuthLogin";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 
 
 function LogInPage() {
@@ -24,7 +25,9 @@ function LogInPage() {
   const [isSuccess, setSuccess] = useState(false);
   const { setIsAuthenticated } = useContext(AuthContext);
   const isInitialRender = useRef(true);
-
+  const [isLoginFocused, setIsTextFocused] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [UserImage, setUserImage] = useState("");
 
   const showToastMessage = (isSuccess) => {
     if(isSuccess){
@@ -36,10 +39,10 @@ function LogInPage() {
         position: toast.POSITION.BOTTOM_LEFT
       });
     }
-    
+
   };
 
-  
+
   const handleOpenAlert = () => {
     setOpenAlert(true);
   };
@@ -48,7 +51,7 @@ function LogInPage() {
     handleOpenAlert();
     showToastMessage(isSuccessToMelcome);
   };
-  
+
   const doLogin = (e) => {
     const url = "http://127.0.0.1:5000/Login"
     const data = {
@@ -75,47 +78,116 @@ function LogInPage() {
     }
   }, [isSuccess]);
 
+const handleTextFocus = () => {
+    setIsTextFocused(true);
+  };
+  const handleTextBlur = () => {
+    setIsTextFocused(false);
+  };
+  const handlePasswordFocus = () => {
+    setIsPasswordFocused(true);
+  };
+  const handlePasswordBlur = () => {
+    setIsPasswordFocused(false);
+  };
 
+      const handleForgotButton = () => {
+          navigate('/reset')
+    }
 
   return (
+    <div id='loginColor'>
     <ChakraProvider>
-      <Center h='300px' color='black'>
-        <Stack spacing={3}>
-          <LogInComp login={login} onChange={setLogin} />
-          <PasswordInput password={password} setPass={setPass} />
-          <Center>
+      <Center h='600px' color='black' style={{ display: 'flex', justifyContent: 'center' }}>
+      <Center style={{ display: 'flex', justifyContent: 'center'}}>
+
+      <div className="pandaPanda">
+      <div className={`handlPanda ${isLoginFocused ? 'loginFocused' : ''} ${isPasswordFocused ? 'passwordFocusedHandl' : ''}`}></div>
+      <div className={`handrPanda ${isLoginFocused ? 'loginFocused' : ''} ${isPasswordFocused ? 'passwordFocusedHandr' : ''}`}></div>
+			<div className="earlPanda"></div>
+			<div className="earrPanda"></div>
+			<div className="facePanda" >
+				<div className="blshlPanda"></div>
+				<div className="blshrPanda"></div>
+				<div className="eyelPanda">
+        <div className={`eyeball1Panda ${isLoginFocused ? 'loginFocusedEyeball1Panda' : ''} ${isPasswordFocused ? 'passwordFocused' : ''}`}></div>
+				</div>
+				<div className="eyerPanda">
+        <div className={`eyeball2Panda ${isLoginFocused ? 'loginFocusedEyeball2Panda' : ''} ${isPasswordFocused ? 'passwordFocused' : ''}`}></div>
+				</div>
+				<div className="nosePanda">
+					<div className="linePanda"></div>
+				</div>
+				<div className="mouthPanda">
+					<div className="mPanda">
+						<div className="m1"></div>
+					</div>
+					<div className="mmPanda">
+						<div className="m1Panda"></div>
+					</div>
+				</div>
+			</div>
+      <Box bg='white'h='250px' w='100%' p={4} color='black'>
+      <Box h='35px'></Box>
+      <Stack spacing={3} left="100px">
+      <LogInComp login={login}
+        onChange={setLogin}
+        onFocus={handleTextFocus}
+        onBlur={handleTextBlur}
+        isFocused={isLoginFocused}
+        />
+      <PasswordInput password={password}
+        setPass={setPass}
+        isFocused={isPasswordFocused}
+        onFocus={handlePasswordFocus}
+        onBlur={handlePasswordBlur}
+        />
+      <Center>
             <Box as='button' borderRadius='md' bg='tomato' color='white' onClick={doLogin} px={2} h={6} w={20}>
               Sign in
             </Box>
             <Center>
-              <Box color="red">{errorMessage}</Box>
+              <Box color="red">{errorMessage}
+              <GoogleLoginv2 setUserImage={setUserImage}/></Box>
             </Center>
           </Center>
           <Center>
-            <Link
-              className="forgot-link"
-              to=""
-              sx={{
-                color: 'blue',
-                textDecoration: 'none',
-                '&:hover': {
-                  textDecoration: 'underline',
-                },
-              }}
-            >
-              Forgot password or Login
-            </Link>
+                      <Box>
+                      <Button variant="outlined" onClick={handleForgotButton}>
+                    Forgot password?
+          </Button>
+        </Box>
           </Center>
+
           <Center>
-            <RegistrationDialog onClose={handleCloseDialog} setSuccess={setSuccess}/> 
-            <ToastContainer />       
+            <RegistrationDialog onClose={handleCloseDialog} setSuccess={setSuccess}/>
+            <ToastContainer />
           </Center>
-          {/*<GoogleLoginPage/>*/}
-          *<GoogleLoginv2/>
-          {/*<OuthLogin/>*/}
-        </Stack>
+          </Stack>
+        </Box>
+		</div>
+
+   </Center>
+    <div className={`pawlPanda ${isLoginFocused ? 'loginFocused' : ''} ${isPasswordFocused ? 'passwordFocusedPawl' : ''}`}>
+		    <div className="p1Panda">
+				<div className="p2Panda"></div>
+				<div className="p3Panda"></div>
+				<div className="p4Panda"></div>
+			</div>
+		</div>
+	<div className={`pawrPanda ${isLoginFocused ? 'loginFocused' : ''} ${isPasswordFocused ? 'passwordFocusedPawr' : ''}`}>
+		<div className="p1Panda">
+			<div className="p2Panda"></div>
+			<div className="p3Panda"></div>
+			<div className="p4Panda"></div>
+		</div>
+    <div className="backgPanda">
+	</div>
+	</div>
       </Center>
     </ChakraProvider>
+
+    </div>
   );
 }
 

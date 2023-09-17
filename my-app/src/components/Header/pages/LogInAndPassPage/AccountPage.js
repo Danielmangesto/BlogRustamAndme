@@ -21,7 +21,7 @@ export default function AccountPage() {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:5000/GetUserProfile', {
+      const response = await axios.get('/profile', {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ export default function AccountPage() {
 
   const fetchWaitingPosts = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:5000/waiting_posts', {
+      const response = await axios.get('/waiting_posts', {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ export default function AccountPage() {
 
   const handleClickYes = async (postId) => {
     try {
-      const response = await axios.post(`http://127.0.0.1:5000/post_approve`, {
+      const response = await axios.post(`/post_approve`, {
         postId:postId,
       });
 
@@ -90,6 +90,10 @@ export default function AccountPage() {
     navigate('/Login'); // Redirect to the login page
   };
 
+  const handleChangePassword = () => {
+    navigate('/pwdReset')
+  };
+
   return (
     <div>
       {userData ? (
@@ -102,6 +106,9 @@ export default function AccountPage() {
           </Button>
           <Button onClick={handleLogout} variant="contained" sx={{ mt: 2 }}>
             Logout
+          </Button>
+          <Button onClick={handleChangePassword} variant="contained" sx={{ mt: 2 }}>
+            ChangePassword
           </Button>
           {userData.role === "admin" && (
             <div>

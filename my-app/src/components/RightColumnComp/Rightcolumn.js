@@ -4,8 +4,8 @@ import PopularBlogs from './PopularBlogs'
 function Rightcolumn(){
     return (
     <div className="column rightcolumn">
-        <LatestBlogs />
         <PopularBlogs />
+        <LatestBlogs />
     </div>
     );
 }

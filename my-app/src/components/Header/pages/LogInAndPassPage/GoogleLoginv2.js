@@ -1,8 +1,8 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function GoogleLoginv2() {
+function GoogleLoginv2({setUserImage}) {
     const navigate = useNavigate();
     const decodeJwtResponse = (token) => {
   try {
@@ -15,7 +15,7 @@ axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*'
 function handleCredentialResponse(response) {
      const responsePayload = decodeJwtResponse(response.credential);
      if (responsePayload.email !== "") {
-         const url = "http://127.0.0.1:5000/Oauth/callback"
+         const url = "/Oauth/callback"
          const data = {
              user: responsePayload.name,
              image: responsePayload.picture,
@@ -24,7 +24,8 @@ function handleCredentialResponse(response) {
          axios.post(url, data, {withCredentials: true})
              .then((res) => {
                  if (res.status === 200) {
-                     navigate('/')
+                    setUserImage(responsePayload.picture);
+                    window.location.reload();
                  }
              })
              .catch((err) => {
